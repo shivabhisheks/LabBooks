@@ -1,0 +1,100 @@
+Details2.java--
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Details2 {
+
+	public static void main(String[] args) {
+		ApplicationContext context= new ClassPathXmlApplicationContext("helloBean2.xml");
+		SBU employeeObj = (SBU) context.getBean("S");
+		employeeObj.displaySBU();
+		ArrayList<EmployeeBean1> al=new ArrayList<EmployeeBean1>();
+		EmployeeBean1 obj=new EmployeeBean1();
+		obj.setEmpId(101);
+		obj.setEmpName("Shiv Abhishek Soni");
+		obj.setAge(30);
+		obj.setSalary(60000.0);
+		EmployeeBean1 obj1=new EmployeeBean1();
+		obj1.setEmpId(202);
+		obj1.setEmpName("Monika Abhishek Soni");
+		obj1.setAge(30);
+		obj1.setSalary(50000.0);
+		al.add(obj);
+		al.add(obj1);
+		System.out.println("Employee Details");
+		System.out.println("------------");
+		Iterator it=al.iterator();
+		while(it.hasNext())
+		{
+			EmployeeBean1 s=(EmployeeBean1)it.next();
+			System.out.print("Employee age="+s.getAge());
+			System.out.print(",Employee Id="+s.getEmpId());
+			System.out.print(",Employee Name="+s.getEmpName());
+			System.out.println(",Employee Salary="+s.getSalary());
+			
+		}
+
+	}
+
+}
+
+SBU.java--
+
+public class SBU {
+ private int sbuId;
+ private String sbuName;
+ private String sbuHead;
+public int getSbuId()
+{
+	return sbuId;
+}
+public void setSbuId(int sbuId)
+{
+	this.sbuId=sbuId;
+}
+public String getSbuName()
+{
+	return sbuName;
+}
+public void setSbuName(String sbuName)
+{
+	this.sbuName=sbuName;
+}
+public String getSbuHead()
+{
+	return sbuHead;
+}
+public void setSbuHead(String sbuHead)
+{
+	this.sbuHead=sbuHead;
+}
+/*public String toString ()
+{
+	System.out.println("SBU Details");
+	System.out.println("------------------");
+	System.out.print("SBU Id="+sbuId);
+	System.out.print(",SBU Name="+sbuName);
+	return ",SBU Head="+sbuHead;
+}
+
+
+
+helloBean2.xml--
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<bean id="S" class="SBU">  
+<property name="sbuId" value="21"></property>  
+<property name="sbuName" value="Shiv Abhishek Soni"></property>  
+<property name="sbuHead" value="Product Engineering Service"></property>  
+</bean>  
+  
+</beans>

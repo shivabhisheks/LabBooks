@@ -1,0 +1,194 @@
+app.component.html
+****************************************
+
+<div class="container">
+<div class="nav-Link">
+  <h1>Welcome to Movie App</h1><br><br>
+  <a [routerLink]="['/AddMovie']">Add Movies</a> &nbsp;
+  <a [routerLink]="['/SearchMovie']">Search Movie By Category</a>
+</div>
+</div>
+<router-outlet></router-outlet>
+*****************************************
+app.module.ts
+
+import{Routes,RouterModule} from '@angular/router';
+import { AddMovieComponent } from './add-movie/add-movie.component';
+import { SearchMovieComponent } from './search-movie/search-movie.component';
+import{MovieServiceService} from './movie-service.service'
+
+
+const routes:Routes=[
+  {path:'AddMovie',component:AddMovieComponent},
+  {path:'SearchMovie',component:SearchMovieComponent}
+]
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+AddMovieComponent,
+    SearchMovieComponent
+],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    RouterModule.forRoot(routes)
+  ],
+  providers: [MovieServiceService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+********************************************************
+
+add-movie.component.html
+
+<div class="container">
+    <h2>Add Movie</h2>
+<form class="form">
+    Movie Name :<input type="text" class="form-control col-sm-2" [(ngModel)]="name" name="name"><br>
+    Give Raiting :<input type="text" class="form-control col-sm-2" [(ngModel)]="raiting" name="raiting"><br>
+    Select Genre :<select class="form-control col-sm-2" [(ngModel)]="genre" name="genre">
+        <option>Action</option>
+        <option>Drama</option>
+        <option>Fantasy</option>
+    </select><br>
+    <input type="button" class="btn btn-success" (click)="addMovie()" value="Add">
+</form>
+</div>
+**************************************************************
+
+add-movie.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { MovieServiceService } from '../movie-service.service';
+
+@Component({
+  selector: 'app-add-movie',
+  templateUrl: './add-movie.component.html',
+  styleUrls: ['./add-movie.component.css']
+})
+export class AddMovieComponent implements OnInit {
+
+  name:string;
+  genre:string;
+  raiting:number;
+
+  constructor(private movieService:MovieServiceService) { }
+
+  ngOnInit(): void {
+  }
+
+  addMovie(){
+    this.movieService.addMovie(this.name,this.genre,this.raiting);
+    alert("Inserted Successfully");
+
+
+  }
+
+}
+*******************************************************************
+search-movie.component.html
+
+<div class="container">
+    <h2>Search Movie</h2>
+
+    <form class="form" #f1="ngForm" (ngSubmit)="searchMovie()">
+        Search by :
+        <select class="form-control col-sm-2" [(ngModel)]="genre" name="genre">
+            <option>Action</option>
+            <option>Fantasy</option>
+            <option>Drama</option>
+        </select><br>
+        <input type="submit" class="btn btn-success" value="Search">
+    </form>
+</div>
+<br>
+<div class="container" *ngIf="f1.submitted">
+    <table class="table bg-info">
+        <thead>
+            <th>Name</th>
+            <th>Genre</th>
+            <th>Raiting</th>
+        </thead>
+        <tbody *ngFor="let movies of searchResult" class="bg-dark text-white" >
+            <td>{{movies.name}}</td>
+            <td>{{movies.genre}}</td>
+            <td>{{movies.raiting}}</td>
+        </tbody>
+    </table>
+</div>
+**********************************************************
+
+search-movie.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { MovieServiceService } from '../movie-service.service';
+import { Movie } from '../Movie';
+
+@Component({
+  selector: 'app-search-movie',
+  templateUrl: './search-movie.component.html',
+  styleUrls: ['./search-movie.component.css']
+})
+export class SearchMovieComponent implements OnInit {
+
+  genre:string;
+  searchResult:Movie[]
+
+  constructor(private movieService:MovieServiceService) { }
+
+  ngOnInit(): void {
+  }
+
+  searchMovie(){
+    this.searchResult= this.movieService.searchMovie(this.genre);
+    
+  }
+
+}
+************************************************************
+
+movie-service.service.ts
+
+import { Injectable } from '@angular/core';
+import{Movie} from './Movie'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MovieServiceService {
+
+  movie:Movie[]=[
+    {name:'Troy',genre:'Action',raiting:7.5},
+    {name:'John Wick',genre:'Action',raiting:7.9},
+    {name:'The Lord of The Rings',genre:'Fantasy',raiting:7.8}
+  ]
+
+  searchList:Movie[]
+
+  constructor() { }
+
+  addMovie(name:string,genre:string,raiting:number){
+    let mov=new Movie;
+    mov.name=name;
+    mov.genre=genre;
+    mov.raiting=raiting;
+    this.movie.push(mov);
+
+  }
+  searchMovie(genre:string):Movie[]{
+    this.searchList=[];
+    for(var i=0;i<this.movie.length;i++){
+      let mov=this.movie[i];
+      let check=mov.genre.localeCompare(genre);
+      if(check==0){
+        this.searchList.push(mov);
+      }
+    }
+    return this.searchList;
+  }
+}
+
